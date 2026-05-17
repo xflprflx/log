@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CargoFlow — Logística Inteligente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #161922;
+    --border: #252a36;
+    --accent: #e8ff47;
+    --accent2: #4affda;
+    --text: #f0f0ee;
+    --muted: #7a8294;
+    --card: #1b1f2b;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 4rem;
+    background: rgba(13, 15, 20, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--accent);
+    color: #0d0f14;
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 4px;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.4;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    margin-bottom: 2rem;
+    position: relative; z-index: 1;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--accent2);
+    border-radius: 50%;
+    display: block;
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    position: relative; z-index: 1;
+    max-width: 14ch;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 48ch;
+    position: relative; z-index: 1;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .hero-actions {
+    display: flex; align-items: center; gap: 1.5rem;
+    margin-top: 3rem;
+    position: relative; z-index: 1;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0d0f14;
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.85rem 2rem;
+    border-radius: 4px;
+    transition: opacity 0.2s, transform 0.15s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
+  .btn-ghost {
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+    transition: color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--text); }
+  .btn-ghost svg { transition: transform 0.2s; }
+  .btn-ghost:hover svg { transform: translateX(4px); }
+
+  .hero-stats {
+    display: flex; gap: 3rem;
+    margin-top: 5rem;
+    position: relative; z-index: 1;
+    padding-top: 3rem;
+    border-top: 1px solid var(--border);
+    width: 100%;
+    max-width: 700px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 2.2rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .stat-num span { color: var(--accent); }
+  .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
+
+  /* ─── SERVIÇOS ─── */
+  .section { padding: 6rem 4rem; }
+  .section-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    max-width: 20ch;
+    margin-bottom: 3.5rem;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+    background: var(--border);
+  }
+  .service-card {
+    background: var(--card);
+    padding: 2.5rem;
+    transition: background 0.25s;
+  }
+  .service-card:hover { background: #20263a; }
+  .service-icon {
+    width: 48px; height: 48px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+  }
+  .icon-yellow { background: rgba(232,255,71,0.12); }
+  .icon-teal { background: rgba(74,255,218,0.1); }
+  .icon-blue { background: rgba(74,144,255,0.1); }
+  .icon-pink { background: rgba(255,74,164,0.1); }
+  .service-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+  }
+  .service-desc { font-size: 0.92rem; color: var(--muted); line-height: 1.75; }
+
+  /* ─── COMO FUNCIONA ─── */
+  .how-section { padding: 6rem 4rem; background: var(--surface); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 3.5rem;
+    position: relative;
+  }
+  .step {
+    display: flex; flex-direction: column;
+  }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem;
+  }
+  .step-text { font-size: 0.9rem; color: var(--muted); }
+
+  /* ─── CTA BAND ─── */
+  .cta-band {
+    margin: 0 4rem 6rem;
+    background: var(--accent);
+    border-radius: 8px;
+    padding: 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .cta-band h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    color: #0d0f14;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    max-width: 20ch;
+  }
+  .btn-dark {
+    background: #0d0f14;
+    color: var(--accent);
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.9rem 2.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .btn-dark:hover { opacity: 0.82; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero, .section { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .how-section { padding: 4rem 1.5rem; }
+    .cta-band { margin: 0 1.5rem 4rem; padding: 2.5rem 2rem; }
+    footer { padding: 2rem 1.5rem; }
+    .hero-stats { flex-wrap: wrap; gap: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Cargo<span>Flow</span></div>
+  <ul class="nav-links">
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#como-funciona">Como funciona</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <button class="nav-cta">Solicitar cotação</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+
+  <div class="hero-badge">
+    <span></span> Rastreamento em tempo real disponível
+  </div>
+
+  <h1>Logística que <em>entrega</em> o que promete</h1>
+
+  <p class="hero-sub">
+    Soluções completas de transporte e distribuição para empresas de todos os portes.
+    Eficiência, tecnologia e confiança em cada carga.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#contato" class="btn-primary">Fale com um especialista</a>
+    <a href="#servicos" class="btn-ghost">
+      Ver serviços
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">98<span>%</span></div>
+      <div class="stat-label">Entregas no prazo</div>
+    </div>
+    <div>
+      <div class="stat-num">12<span>k+</span></div>
+      <div class="stat-label">Clientes ativos</div>
+    </div>
+    <div>
+      <div class="stat-num">200<span>+</span></div>
+      <div class="stat-label">Destinos cobertos</div>
+    </div>
+    <div>
+      <div class="stat-num">18<span>anos</span></div>
+      <div class="stat-label">No mercado</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS -->
+<section class="section" id="servicos">
+  <p class="section-label">Nossos serviços</p>
+  <h2>Tudo que sua operação precisa</h2>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon icon-yellow">🚚</div>
+      <div class="service-title">Transporte Rodoviário</div>
+      <p class="service-desc">Frota própria e parceiros homologados para cargas fracionadas e lotação em todo o Brasil, com rastreamento 24h.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon icon-teal">✈️</div>
+      <div class="service-title">Carga Aérea</div>
+      <p class="service-desc">Soluções expressas para cargas urgentes e de alto valor. Cobertura nacional e internacional com agilidade garantida.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon icon-blue">🏭</div>
+      <div class="service-title">Armazenagem</div>
+      <p class="service-desc">Centros de distribuição estrategicamente localizados. WMS integrado, gestão de estoque e fulfillment completo.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon icon-pink">📦</div>
+      <div class="service-title">Last Mile</div>
+      <p class="service-desc">Entrega final com precisão e rapidez. Soluções customizadas para e-commerce e varejo, com rastreio ao consumidor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="how-section" id="como-funciona">
+  <div style="max-width: 1100px; margin: 0 auto;">
+    <p class="section-label">Processo simples</p>
+    <h2>Do pedido à entrega em 4 passos</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Cotação instantânea</div>
+        <p class="step-text">Informe origem, destino e volume. Receba uma proposta personalizada em minutos, sem burocracia.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Coleta programada</div>
+        <p class="step-text">Agendamos a coleta na data e horário que melhor se adequam à sua operação.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Rastreamento em tempo real</div>
+        <p class="step-text">Acompanhe sua carga pelo painel digital ou receba atualizações automáticas por WhatsApp e e-mail.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Entrega confirmada</div>
+        <p class="step-text">Comprovante digital enviado automaticamente. Satisfação garantida ou sua próxima entrega é por nossa conta.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band" id="contato">
+  <h3>Pronto para otimizar sua logística?</h3>
+  <a href="mailto:contato@cargoflow.com.br" class="btn-dark">Solicitar cotação gratuita →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-size:1.1rem;">Cargo<span style="color:var(--accent)">Flow</span></div>
+  <span>© 2026 CargoFlow Logística Ltda.</span>
+  <div style="display:flex;gap:1.5rem;">
+    <a href="#">Privacidade</a>
+    <a href="#">Termos</a>
+    <a href="#">LGPD</a>
+  </div>
+</footer>
+
+</body>
+</html>
